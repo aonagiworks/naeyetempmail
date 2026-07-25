@@ -28,7 +28,6 @@
       --accent-light: #8D4458;
       --accent-soft: rgba(107,44,62,0.08);
       --accent-badge: #A8556A;
-      --navy: #1E3A5F;
       --radius: 12px;
       --radius-lg: 16px;
       --radius-xl: 20px;
@@ -38,6 +37,22 @@
       --display: 'Playfair Display', Georgia, serif;
       --mono: ui-monospace, 'SF Mono', Menlo, monospace;
     }
+    /* Dark mode overrides */
+    html.dark {
+      --bg: #1A1618;
+      --surface: #231F21;
+      --border: #352F32;
+      --border-light: #2A2528;
+      --text: #EDE4E2;
+      --muted: #9C8E8A;
+      --muted-light: #73655F;
+      --accent: #C97B84;
+      --accent-light: #D9959E;
+      --accent-soft: rgba(201,123,132,0.15);
+      --accent-badge: #D07A85;
+      --shadow: 0 2px 16px rgba(0,0,0,0.25);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { min-height: 100%; }
     body {
@@ -46,48 +61,27 @@
       color: var(--text);
       line-height: 1.5;
       overflow-x: hidden;
+      transition: background 0.25s, color 0.25s;
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { color: var(--accent-light); }
-    img { max-width: 100%; display: block; }
     button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-    input { font: inherit; }
-    .wrap { width: min(1100px, 100% - 2rem); margin: 0 auto; }
-    .page { padding: 2rem 0 3rem; display: grid; gap: 1.5rem; }
+    .wrap { width: min(1000px, 100% - 2rem); margin: 0 auto; }
+    .page { padding: 1.5rem 0 2.5rem; display: grid; gap: 1.25rem; }
 
-    /* Header */
+    /* Nav */
     nav {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0.9rem 0; gap: 1rem;
-      border-bottom: 1px solid var(--border-light);
+      padding: 0.75rem 0; gap: 1rem;
     }
     .nav-brand {
       font-family: var(--display);
-      font-size: 1.45rem;
+      font-size: 1.3rem;
       font-weight: 600;
       font-style: italic;
       color: var(--accent);
-      letter-spacing: 0.01em;
     }
-    .nav-links {
-      display: flex; align-items: center; gap: 1.75rem;
-    }
-    .nav-links a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--muted);
-      transition: color 0.15s;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a.active {
-      color: var(--accent);
-      font-weight: 600;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.15rem;
-    }
-    .nav-icons {
-      display: flex; align-items: center; gap: 0.75rem;
-    }
+    .nav-icons { display: flex; align-items: center; gap: 0.5rem; }
     .nav-icons button {
       width: 34px; height: 34px;
       border-radius: 50%;
@@ -98,341 +92,189 @@
     .nav-icons button:hover { background: var(--accent-soft); color: var(--accent); }
     .nav-icons svg { width: 18px; height: 18px; }
 
-    /* Hero Card */
+    /* Hero */
     .hero-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 2.5rem 2.5rem 2rem;
+      padding: 2rem 2rem 1.75rem;
       box-shadow: var(--shadow-lg);
       text-align: center;
+      transition: background 0.25s, border-color 0.25s;
     }
     .hero-title {
       font-family: var(--display);
-      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
       font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
     }
-    .hero-sub {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 1.5rem;
-    }
+    .hero-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 1.25rem; }
     .email-box {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 0.35rem 0.35rem 0.35rem 1rem;
-      max-width: 550px;
-      margin: 0 auto;
+      padding: 0.3rem 0.3rem 0.3rem 1rem;
+      max-width: 520px; margin: 0 auto;
     }
-    .email-box .icon-wrap {
-      width: 20px; height: 20px;
-      color: var(--muted);
-      flex-shrink: 0;
-    }
-    .email-box .icon-wrap svg { width: 100%; height: 100%; }
     .email-box .addr {
-      flex: 1;
-      text-align: left;
-      font-family: var(--mono);
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      min-width: 0;
+      flex: 1; text-align: left;
+      font-family: var(--mono); font-size: 0.9rem; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
     }
-    .email-box .addr.empty {
-      font-family: var(--font);
-      font-weight: 400;
-      color: var(--muted-light);
-      font-size: 0.85rem;
-    }
+    .email-box .addr.empty { font-family: var(--font); font-weight: 400; color: var(--muted-light); font-size: 0.85rem; }
     .btn-copy {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: var(--accent);
-      color: #fff;
-      border-radius: 10px;
-      padding: 0.6rem 1.1rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      transition: all 0.15s;
+      display: flex; align-items: center; gap: 0.35rem;
+      background: var(--accent); color: #fff;
+      border-radius: 10px; padding: 0.5rem 1rem;
+      font-size: 0.8rem; font-weight: 600; transition: all 0.15s;
       white-space: nowrap;
     }
     .btn-copy:hover { background: var(--accent-light); }
     .btn-copy:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-copy svg { width: 16px; height: 16px; }
+    .btn-copy svg { width: 15px; height: 15px; }
     .btn-copy.done { background: #4A7A5C; }
     .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 1.25rem;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem;
+      margin-top: 1rem;
     }
     .pill {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: var(--bg);
-      border: 1px solid var(--border-light);
-      border-radius: 999px;
-      padding: 0.45rem 0.85rem;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--muted);
+      display: flex; align-items: center; gap: 0.35rem;
+      background: var(--bg); border: 1px solid var(--border-light);
+      border-radius: 999px; padding: 0.4rem 0.8rem;
+      font-size: 0.76rem; font-weight: 500; color: var(--muted);
       transition: all 0.12s;
     }
     .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
     .pill svg { width: 14px; height: 14px; }
-    .pill.accent { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
-    .pill.accent svg { color: var(--accent); }
+    .pill.primary { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
+    .pill.primary:hover { filter: brightness(1.08); }
     .pill.danger:hover { border-color: #C45C66; color: #C45C66; background: #FFF1F2; }
     .pill:disabled { opacity: 0.35; cursor: not-allowed; }
     .expiry-pill {
       display: flex; align-items: center; gap: 0.35rem;
-      background: var(--accent-soft);
-      border-radius: 999px;
-      padding: 0.45rem 0.85rem;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--accent);
-      margin-left: auto;
+      background: var(--accent-soft); border-radius: 999px;
+      padding: 0.4rem 0.8rem; font-size: 0.76rem; font-weight: 500; color: var(--accent);
     }
     .expiry-pill svg { width: 14px; height: 14px; }
-    .error-banner {
-      display: none;
-      padding: 0.7rem 1rem;
-      background: #FFF1F2;
-      color: #C45C66;
-      border: 1px solid #F0C9CD;
-      border-radius: var(--radius);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-align: center;
-    }
+    .error-banner { display: none; padding: 0.6rem 1rem; background: #FFF1F2; color: #C45C66; border: 1px solid #F0C9CD; border-radius: var(--radius); font-size: 0.85rem; font-weight: 500; text-align: center; }
     .error-banner.show { display: block; }
 
-    /* Inbox Section */
-    .inbox-section {
-      display: grid;
-      grid-template-columns: 200px 1fr;
+    /* Inbox */
+    .inbox-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 400px;
+      min-height: 320px;
+      transition: background 0.25s, border-color 0.25s;
     }
-    .inbox-sidebar {
-      background: var(--bg);
-      border-right: 1px solid var(--border-light);
-      padding: 1.25rem 0.75rem;
-    }
-    .sidebar-item {
-      display: flex; align-items: center; gap: 0.6rem;
-      padding: 0.55rem 0.75rem;
-      border-radius: var(--radius);
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--muted);
-      transition: all 0.12s;
-      cursor: pointer;
-    }
-    .sidebar-item:hover { background: var(--border-light); color: var(--text); }
-    .sidebar-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-    .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .sidebar-badge {
-      margin-left: auto;
-      background: var(--accent-badge);
-      color: #fff;
-      border-radius: 999px;
-      padding: 0.05rem 0.45rem;
-      font-size: 0.7rem;
-      font-weight: 600;
-      line-height: 1.4;
-    }
-    .sidebar-item:not(.active) .sidebar-badge { background: var(--muted-light); }
-
-    .inbox-main {
-      display: flex; flex-direction: column; min-height: 0;
-    }
-    .inbox-header {
+    .inbox-head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border-light);
-    }
-    .inbox-header h2 { font-size: 1rem; font-weight: 600; }
-    .inbox-tools { display: flex; gap: 0.35rem; }
-    .inbox-tools button {
-      width: 30px; height: 30px;
-      border-radius: 8px;
-      display: grid; place-items: center;
-      color: var(--muted);
-      transition: all 0.12s;
-    }
-    .inbox-tools button:hover { background: var(--accent-soft); color: var(--accent); }
-    .inbox-tools svg { width: 16px; height: 16px; }
-
-    .inbox-body { flex: 1; overflow: auto; min-height: 280px; }
-    .email-row {
-      display: flex; align-items: center; gap: 0.75rem;
       padding: 0.85rem 1.25rem;
       border-bottom: 1px solid var(--border-light);
-      cursor: pointer;
-      transition: background 0.1s;
-      min-width: 0;
+    }
+    .inbox-head h2 { font-size: 0.95rem; font-weight: 600; }
+    .inbox-tools { display: flex; gap: 0.25rem; }
+    .inbox-tools button {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center;
+      color: var(--muted); transition: all 0.12s;
+    }
+    .inbox-tools button:hover { background: var(--accent-soft); color: var(--accent); }
+    .inbox-tools svg { width: 15px; height: 15px; }
+    .inbox-body { min-height: 240px; }
+    .email-row {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer; transition: background 0.1s;
     }
     .email-row:hover { background: var(--bg); }
     .email-row.active { background: var(--accent-soft); }
-    .email-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .email-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .email-dot.unread { background: var(--accent-badge); }
     .email-dot.read { background: var(--muted-light); }
     .email-info { flex: 1; min-width: 0; }
-    .email-sender { font-size: 0.82rem; font-weight: 600; color: var(--text); }
-    .email-subject { font-size: 0.82rem; font-weight: 500; color: var(--text); margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .email-preview { font-size: 0.75rem; color: var(--muted); margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .email-time { font-size: 0.72rem; color: var(--muted-light); white-space: nowrap; flex-shrink: 0; }
-
+    .email-sender { font-size: 0.8rem; font-weight: 600; }
+    .email-subject { font-size: 0.8rem; font-weight: 500; margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-preview { font-size: 0.74rem; color: var(--muted); margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-time { font-size: 0.7rem; color: var(--muted-light); white-space: nowrap; flex-shrink: 0; }
     .empty-inbox {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 3rem 1.5rem; text-align: center; color: var(--muted);
-      height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 2.5rem 1.5rem; text-align: center;
+      color: var(--muted);
     }
-    .empty-inbox svg { width: 36px; height: 36px; color: var(--muted-light); margin-bottom: 0.75rem; }
-    .empty-inbox h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
-    .empty-inbox p { font-size: 0.8rem; }
+    .empty-inbox svg { width: 32px; height: 32px; color: var(--muted-light); margin-bottom: 0.5rem; }
+    .empty-inbox h3 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+    .empty-inbox p { font-size: 0.78rem; }
 
     /* Drawer */
     .drawer-overlay {
       position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: blur(4px);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
+      background: rgba(0,0,0,0.25); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
     }
     .drawer-overlay.open { opacity: 1; pointer-events: auto; }
     .drawer {
       position: fixed; top: 0; right: 0; bottom: 0;
-      width: min(100vw, 520px); z-index: 110;
-      background: var(--surface);
-      box-shadow: -8px 0 40px rgba(0,0,0,0.12);
-      transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      width: min(100vw, 500px); z-index: 110;
+      background: var(--surface); box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+      transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
       display: flex; flex-direction: column;
     }
     .drawer.open { transform: translateX(0); }
     .drawer-head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 1.25rem;
+      padding: 0.85rem 1.1rem;
       border-bottom: 1px solid var(--border-light);
     }
     .drawer-close {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      display: grid; place-items: center;
-      color: var(--muted);
-      transition: all 0.12s;
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center; color: var(--muted); transition: all 0.12s;
     }
     .drawer-close:hover { background: var(--accent-soft); color: var(--accent); }
-    .drawer-close svg { width: 18px; height: 18px; }
-    .drawer-actions { display: flex; gap: 0.4rem; }
+    .drawer-close svg { width: 17px; height: 17px; }
+    .drawer-actions { display: flex; gap: 0.35rem; }
     .drawer-actions button {
-      padding: 0.35rem 0.7rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--muted);
-      border: 1px solid var(--border-light);
-      transition: all 0.12s;
+      padding: 0.3rem 0.65rem; border-radius: 8px;
+      font-size: 0.74rem; font-weight: 500; color: var(--muted);
+      border: 1px solid var(--border-light); transition: all 0.12s;
     }
     .drawer-actions button:hover { border-color: var(--accent); color: var(--accent); }
-    .drawer-body {
-      flex: 1; overflow-y: auto; padding: 1.25rem;
-    }
-    .drawer-subject {
-      font-family: var(--display);
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 0.8rem;
-    }
-    .drawer-meta {
-      display: flex; flex-wrap: wrap; gap: 0.25rem 1rem;
-      font-size: 0.78rem; color: var(--muted);
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid var(--border-light);
-      margin-bottom: 1rem;
-    }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 1.1rem 1.1rem 1.5rem; }
+    .drawer-subject { font-family: var(--display); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .drawer-meta { font-size: 0.76rem; color: var(--muted); padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-light); margin-bottom: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
     .drawer-meta strong { color: var(--text); font-weight: 600; }
-    .drawer-content { font-size: 0.88rem; color: var(--text); line-height: 1.7; }
-    .drawer-content iframe {
-      width: 100%; min-height: 250px;
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius);
-      background: #fff;
-    }
-    .drawer-content pre {
-      white-space: pre-wrap; word-break: break-word;
-      font-family: var(--font); font-size: 0.88rem;
-      background: var(--bg); border: 1px solid var(--border-light);
-      border-radius: var(--radius); padding: 1rem;
-    }
+    .drawer-content { font-size: 0.86rem; line-height: 1.7; }
+    .drawer-content iframe { width: 100%; min-height: 220px; border: 1px solid var(--border-light); border-radius: var(--radius); background: #fff; }
+    .drawer-content pre { white-space: pre-wrap; word-break: break-word; font-family: var(--font); font-size: 0.86rem; background: var(--bg); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 0.85rem; }
 
     /* Footer */
-    footer {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 0.75rem 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border-light);
-      font-size: 0.78rem;
-    }
-    .footer-brand {
-      font-family: var(--display);
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--accent);
-    }
-    .footer-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
-    .footer-links a { color: var(--muted); }
-    .footer-links a:hover { color: var(--text); }
-    .footer-copy { color: var(--muted-light); }
+    footer { padding-top: 1.25rem; text-align: center; font-size: 0.76rem; color: var(--muted-light); }
+    footer .footer-brand { font-family: var(--display); font-size: 1.1rem; font-style: italic; color: var(--accent); display: block; margin-bottom: 0.3rem; }
 
-    /* Toast */
     .toast {
-      position: fixed; left: 50%; bottom: 1.5rem;
+      position: fixed; left: 50%; bottom: 1.25rem;
       transform: translateX(-50%) translateY(10px);
       background: var(--text); color: #fff;
-      border-radius: 999px; padding: 0.65rem 1.1rem;
+      border-radius: 999px; padding: 0.6rem 1rem;
       font-size: 0.82rem; font-weight: 500;
       opacity: 0; pointer-events: none;
       transition: all 0.2s; z-index: 200;
-      max-width: min(90vw, 340px); text-align: center;
+      max-width: min(90vw, 320px); text-align: center;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 860px) {
-      .inbox-section { grid-template-columns: 1fr; }
-      .inbox-sidebar { display: none; }
-      .hero-card { padding: 1.5rem 1.25rem; }
-      .email-box { flex-wrap: wrap; padding: 0.5rem; }
-      .email-box .addr { width: 100%; text-align: center; padding: 0.25rem 0; }
-      .btn-copy { width: 100%; justify-content: center; }
-      .nav-links { display: none; }
-      footer { flex-direction: column; text-align: center; }
-    }
-    @media (max-width: 480px) {
-      .page { padding: 1rem 0; gap: 1rem; }
+    @media (max-width: 640px) {
       .hero-card { padding: 1.25rem 1rem; border-radius: var(--radius-lg); }
-      .hero-title { font-size: 1.3rem; }
-      .inbox-header { padding: 0.75rem 1rem; }
-      .email-row { padding: 0.65rem 1rem; }
+      .hero-title { font-size: 1.25rem; }
+      .email-box { flex-wrap: wrap; padding: 0.5rem; }
+      .email-box .addr { width: 100%; text-align: center; padding: 0.2rem 0; }
+      .btn-copy { width: 100%; justify-content: center; }
+      .inbox-head { padding: 0.6rem 1rem; }
+      .email-row { padding: 0.6rem 1rem; }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition-duration: 0.01ms !important; }
@@ -445,36 +287,25 @@
     <!-- Nav -->
     <nav>
       <span class="nav-brand">Naeya</span>
-      <div class="nav-links">
-        <a href="#how">How it works</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#" class="active">Premium</a>
-      </div>
       <div class="nav-icons">
-        <button aria-label="Language"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 21a9 9 0 100-18 9 9 0 000 18z M3.6 9h16.8 M3.6 15h16.8 M12 3a15 15 0 010 18 15 15 0 010-18z"/></svg></button>
         <button id="themeToggle" aria-label="Toggle theme"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9 9 0 0012 21a9 9 0 008.354-5.646z"/></svg></button>
-        <button aria-label="Status"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.858 15.355-5.858 21.213 0"/></svg></button>
       </div>
     </nav>
 
-    <!-- Hero Card -->
+    <!-- Hero -->
     <div class="hero-card">
       <h1 class="hero-title">Secure, Temporary Email</h1>
       <p class="hero-sub">Protect your personal inbox from spam with a disposable address.</p>
-
       <div id="errorBanner" class="error-banner"></div>
-
       <div class="email-box">
-        <div class="icon-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
         <span id="emailAddress" class="addr empty">Generate a new address to start</span>
         <button id="btnCopy" class="btn-copy" disabled>
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           COPY
         </button>
       </div>
-
       <div class="hero-actions">
-        <button id="btnGenerate" class="pill" style="background:var(--accent);color:#fff;border-color:transparent;font-weight:600">
+        <button id="btnGenerate" class="pill primary">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/></svg>
           Generate
         </button>
@@ -490,62 +321,38 @@
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           Delete
         </button>
-        <div class="expiry-pill" id="expiryPill">
+        <div class="expiry-pill">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           Expires in: <span id="timer">10:00</span>
         </div>
       </div>
     </div>
 
-    <!-- Inbox Section -->
-    <div class="inbox-section">
-      <div class="inbox-sidebar">
-        <div class="sidebar-item active" id="sidebarInbox">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          Inbox
-          <span class="sidebar-badge" id="inboxBadge">0</span>
-        </div>
-        <div class="sidebar-item">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 4v12l-4-2-4 2V4M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          Drafts
-        </div>
-        <div class="sidebar-item">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          Trash
+    <!-- Inbox -->
+    <div class="inbox-card">
+      <div class="inbox-head">
+        <h2>Inbox</h2>
+        <div class="inbox-tools">
+          <button id="btnRefresh2" aria-label="Refresh"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg></button>
+          <button id="btnFilter" aria-label="Filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg></button>
         </div>
       </div>
-
-      <div class="inbox-main">
-        <div class="inbox-header">
-          <h2>Inbox</h2>
-          <div class="inbox-tools">
-            <button id="btnRefresh2" aria-label="Refresh"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg></button>
-            <button id="btnFilter" aria-label="Filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg></button>
-          </div>
+      <div class="inbox-body" id="inboxBody">
+        <div class="empty-inbox" id="emptyState">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <h3>Waiting for incoming messages</h3>
+          <p>Emails sent to your temporary address will show up here automatically.</p>
         </div>
-        <div class="inbox-body" id="inboxBody">
-          <div class="empty-inbox" id="emptyState">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            <h3>Waiting for incoming messages</h3>
-            <p>Emails sent to your temporary address will show up here automatically.</p>
-          </div>
-          <div id="inboxList"></div>
-        </div>
+        <div id="inboxList"></div>
       </div>
     </div>
 
     <!-- Footer -->
     <footer>
       <span class="footer-brand">Naeya</span>
-      <div class="footer-links">
-        <a href="#">FAQ</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">API Documentation</a>
-        <a href="#">Contact</a>
-      </div>
-      <span class="footer-copy">© 2026 Naeya Digital Hygiene. All rights reserved.</span>
+      NaeyaTempMail · free · no signup
     </footer>
+
   </div>
 
   <!-- Drawer -->
@@ -555,7 +362,6 @@
       <button class="drawer-close" id="btnCloseDrawer"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg></button>
       <div class="drawer-actions">
         <button id="btnMarkSeen">Mark seen</button>
-        <button id="btnDrawerDelete" style="color:#C45C66;border-color:#F0C9CD">Delete</button>
       </div>
     </div>
     <div class="drawer-body">
@@ -570,6 +376,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="app.js?v=2" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
