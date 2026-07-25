@@ -1,12 +1,13 @@
-// NaeyaTempMail — UI + mail.tm API controller
+// NaeyaTempMail — UI + mail.tm API (Saki-inspired soft layout)
 const API = 'https://api.mail.tm';
 const STORAGE_KEY = 'naeyatempmail.session.v1';
-const THEME_KEY = 'naeyatempmail.theme';
 const POLL_MS = 8000;
+const SESSION_MINUTES = 10;
 
-/** @type {{ address: string, password: string, token: string, accountId: string, domain: string } | null} */
+/** @type {{ address: string, password: string, token: string, accountId: string, domain: string, createdAt: number } | null} */
 let session = null;
 let pollTimer = null;
+let expiryTimer = null;
 let selectedId = null;
 let busy = false;
 
@@ -14,28 +15,24 @@ const $ = (id) => document.getElementById(id);
 
 const el = {
   email: $('emailAddress'),
-  badge: $('liveBadge'),
-  liveDot: $('liveDot'),
-  liveText: $('liveText'),
   error: $('errorBanner'),
   btnGenerate: $('btnGenerate'),
   btnCopy: $('btnCopy'),
   btnRefresh: $('btnRefresh'),
+  btnRefresh2: $('btnRefresh2'),
   btnNew: $('btnNew'),
-  domainInfo: $('domainInfo'),
-  mailCount: $('mailCount'),
-  pollInfo: $('pollInfo'),
+  btnPrefix: $('btnPrefix'),
+  inboxBadge: $('inboxBadge'),
   inboxList: $('inboxList'),
   emptyState: $('emptyState'),
   drawer: $('emailDrawer'),
   overlay: $('drawerOverlay'),
   drawerSubject: $('drawerSubject'),
   drawerSender: $('drawerSender'),
-  drawerEmail: $('drawerEmail'),
   drawerTime: $('drawerTime'),
   drawerBody: $('drawerBody'),
   toast: $('toast'),
-  themeToggle: $('themeToggle'),
+  timer: $('timer'),
 };
 
 function toast(msg) {
@@ -47,27 +44,26 @@ function toast(msg) {
 
 function setError(msg) {
   if (!msg) {
-    el.error.classList.add('hidden');
+    el.error.classList.remove('show');
     el.error.textContent = '';
     return;
   }
   el.error.textContent = msg;
-  el.error.classList.remove('hidden');
-}
-
-function setLive(live, text) {
-  el.liveText.textContent = text;
-  el.liveDot.className = `w-2 h-2 rounded-full ${live ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`;
-  el.badge.className = live
-    ? 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium'
-    : 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-500 dark:text-slate-400 text-xs font-medium';
+  el.error.classList.add('show');
 }
 
 function setButtons(hasSession) {
   el.btnCopy.disabled = !hasSession;
   el.btnRefresh.disabled = !hasSession;
+  if (el.btnRefresh2) el.btnRefresh2.disabled = !hasSession;
   el.btnNew.disabled = !hasSession;
+  if (el.btnPrefix) el.btnPrefix.disabled = !hasSession;
   el.btnGenerate.disabled = hasSession || busy;
+  if (hasSession) {
+    el.btnGenerate.style.display = 'none';
+  } else {
+    el.btnGenerate.style.display = '';
+  }
 }
 
 function saveSession() {
@@ -135,48 +131,69 @@ async function pickDomain() {
 
 function renderEmail() {
   if (!session) {
-    el.email.value = '';
-    el.email.placeholder = 'Tekan Generate untuk buat email...';
-    el.domainInfo.textContent = '—';
-    el.mailCount.textContent = '0 Message';
-    el.pollInfo.textContent = 'off';
-    setLive(false, 'Idle');
+    el.email.textContent = 'Generate a new address to start';
+    el.email.classList.add('empty');
+    el.inboxBadge.textContent = '0';
+    stopExpiry();
+    el.timer.textContent = '10:00';
     showEmpty(true);
     return;
   }
-  el.email.value = session.address;
-  el.domainInfo.textContent = session.domain;
-  setLive(true, 'Live Sync');
-  el.pollInfo.textContent = `every ${POLL_MS / 1000}s`;
+  el.email.textContent = session.address;
+  el.email.classList.remove('empty');
+  startExpiry();
 }
 
 function showEmpty(show) {
-  el.emptyState.classList.toggle('hidden', !show);
-  el.emptyState.classList.toggle('flex', show);
-  el.inboxList.classList.toggle('hidden', show);
+  el.emptyState.style.display = show ? 'flex' : 'none';
+  el.inboxList.style.display = show ? 'none' : 'block';
 }
 
-function timeAgo(iso) {
+function timeLabel(iso) {
   if (!iso) return '';
-  const diff = Math.max(0, Date.now() - new Date(iso).getTime());
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return new Date(iso).toLocaleString();
+  const d = new Date(iso);
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  if (sameDay) {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  return 'Yesterday';
 }
 
-async function createSession() {
+function startExpiry() {
+  stopExpiry();
+  const created = session?.createdAt || Date.now();
+  const end = created + SESSION_MINUTES * 60 * 1000;
+  const tick = () => {
+    const left = Math.max(0, Math.floor((end - Date.now()) / 1000));
+    const m = String(Math.floor(left / 60)).padStart(2, '0');
+    const s = String(left % 60).padStart(2, '0');
+    el.timer.textContent = left === 0 ? 'Expired' : `${m}:${s}`;
+    if (left === 0) {
+      stopExpiry();
+      toast('Session expired — generate new address');
+    }
+  };
+  tick();
+  expiryTimer = setInterval(tick, 1000);
+}
+
+function stopExpiry() {
+  if (expiryTimer) clearInterval(expiryTimer);
+  expiryTimer = null;
+}
+
+async function createSession(customLocal) {
   if (busy) return;
   busy = true;
   setButtons(!!session);
   setError('');
-  setLive(false, 'Creating…');
   el.btnGenerate.disabled = true;
   try {
     const domain = await pickDomain();
-    const address = `${randLocal(10)}@${domain}`;
+    let local = customLocal ? customLocal.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 24) : randLocal(10);
+    if (!local || local.length < 3) local = randLocal(10);
+    const address = `${local}@${domain}`;
     const password = `Tm!${randLocal(14)}`;
     const account = await api('/accounts', {
       method: 'POST',
@@ -192,6 +209,7 @@ async function createSession() {
       token: tokenRes.token,
       accountId: account.id,
       domain,
+      createdAt: Date.now(),
     };
     saveSession();
     renderEmail();
@@ -201,7 +219,6 @@ async function createSession() {
     await refreshMessages();
   } catch (err) {
     setError(`Gagal generate: ${err.message}`);
-    setLive(false, 'Error');
   } finally {
     busy = false;
     setButtons(!!session);
@@ -214,14 +231,14 @@ async function refreshMessages() {
     const data = await api('/messages', { token: session.token });
     const items = asMembers(data);
     const total = data?.['hydra:totalItems'] ?? items.length;
-    el.mailCount.textContent = `${total} Message${total === 1 ? '' : 's'}`;
+    el.inboxBadge.textContent = String(total);
     renderList(items);
-    setLive(true, 'Live Sync');
     setError('');
   } catch (err) {
     if (String(err.message).startsWith('401')) {
       setError('Session expired. Generate alamat baru.');
       stopPoll();
+      stopExpiry();
       session = null;
       saveSession();
       renderEmail();
@@ -229,7 +246,6 @@ async function refreshMessages() {
       return;
     }
     setError(`Gagal ambil inbox: ${err.message}`);
-    setLive(false, 'Error');
   }
 }
 
@@ -243,25 +259,19 @@ function renderList(items) {
   el.inboxList.innerHTML = '';
   for (const m of items) {
     const fromName = m.from?.name || m.from?.address || 'Unknown';
-    const fromAddr = m.from?.address || '';
     const subject = m.subject || '(no subject)';
     const intro = m.intro || '';
-    const when = timeAgo(m.createdAt);
+    const when = timeLabel(m.createdAt);
     const row = document.createElement('div');
-    row.className = `p-4 sm:px-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors flex items-center justify-between gap-4 ${m.id === selectedId ? 'bg-indigo-50/60 dark:bg-indigo-950/20' : ''}`;
+    row.className = 'email-row' + (m.id === selectedId ? ' active' : '');
     row.innerHTML = `
-      <div class="flex items-start gap-3 min-w-0">
-        <span class="w-2.5 h-2.5 mt-1.5 rounded-full ${m.seen ? 'bg-slate-300 dark:bg-slate-600' : 'bg-indigo-600'} shrink-0"></span>
-        <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <h4 class="text-sm font-semibold truncate">${escapeHtml(fromName)}</h4>
-            <span class="text-xs text-slate-400 truncate hidden sm:inline">&lt;${escapeHtml(fromAddr)}&gt;</span>
-          </div>
-          <p class="text-xs font-medium text-slate-800 dark:text-slate-200 truncate mt-0.5">${escapeHtml(subject)}</p>
-          <p class="text-xs text-slate-400 truncate mt-0.5">${escapeHtml(intro)}</p>
-        </div>
+      <span class="email-dot ${m.seen ? 'read' : 'unread'}"></span>
+      <div class="email-info">
+        <div class="email-sender">${escapeHtml(fromName)}</div>
+        <div class="email-subject">${escapeHtml(subject)}</div>
+        <div class="email-preview">${escapeHtml(intro)}</div>
       </div>
-      <span class="text-xs text-slate-400 whitespace-nowrap shrink-0">${escapeHtml(when)}</span>`;
+      <span class="email-time">${escapeHtml(when)}</span>`;
     row.addEventListener('click', () => openMessage(m.id));
     el.inboxList.appendChild(row);
   }
@@ -273,9 +283,8 @@ async function openMessage(id) {
   openDrawer();
   el.drawerSubject.textContent = 'Loading…';
   el.drawerSender.textContent = '';
-  el.drawerEmail.textContent = '';
   el.drawerTime.textContent = '';
-  el.drawerBody.innerHTML = '<p class="text-slate-400">Loading message…</p>';
+  el.drawerBody.innerHTML = '<p style="color:var(--muted)">Loading message…</p>';
   try {
     const m = await api(`/messages/${id}`, { token: session.token });
     api(`/messages/${id}`, { method: 'PATCH', token: session.token, body: { seen: true } }).catch(() => {});
@@ -289,8 +298,7 @@ async function openMessage(id) {
     const text = Array.isArray(m.text) ? m.text.join('\n') : (m.text || m.intro || '');
 
     el.drawerSubject.textContent = subject;
-    el.drawerSender.textContent = fromName;
-    el.drawerEmail.textContent = fromAddr ? `<${fromAddr}>` : '';
+    el.drawerSender.textContent = fromAddr ? `${fromName} <${fromAddr}>` : fromName;
     el.drawerTime.textContent = when;
     el.drawerBody.innerHTML = '';
 
@@ -304,40 +312,36 @@ async function openMessage(id) {
       pre.textContent = text || '(empty body)';
       el.drawerBody.appendChild(pre);
     }
-    // re-render list to update seen dots / active
     refreshMessages();
   } catch (err) {
-    el.drawerBody.innerHTML = `<p class="text-red-500">Gagal buka pesan: ${escapeHtml(err.message)}</p>`;
+    el.drawerBody.innerHTML = `<p style="color:#C45C66">Gagal buka pesan: ${escapeHtml(err.message)}</p>`;
   }
 }
 
 function openDrawer() {
-  el.drawer.classList.remove('translate-x-full');
-  el.overlay.classList.remove('opacity-0', 'pointer-events-none');
-  el.overlay.classList.add('opacity-100');
+  el.drawer.classList.add('open');
+  el.overlay.classList.add('open');
 }
 
 function closeDrawer() {
-  el.drawer.classList.add('translate-x-full');
-  el.overlay.classList.add('opacity-0', 'pointer-events-none');
-  el.overlay.classList.remove('opacity-100');
+  el.drawer.classList.remove('open');
+  el.overlay.classList.remove('open');
 }
 
 async function copyEmail() {
   if (!session) return;
   try {
     await navigator.clipboard.writeText(session.address);
-    const original = el.btnCopy.innerHTML;
-    el.btnCopy.classList.replace('bg-indigo-600', 'bg-emerald-600');
-    el.btnCopy.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
+    el.btnCopy.classList.add('done');
+    const span = el.btnCopy.querySelector('span') || el.btnCopy;
+    const old = el.btnCopy.innerHTML;
     el.btnCopy.innerHTML = `
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-      <span>Copied!</span>`;
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 13l4 4L19 7"/></svg>
+      COPIED`;
     toast('Email disalin');
     setTimeout(() => {
-      el.btnCopy.classList.replace('bg-emerald-600', 'bg-indigo-600');
-      el.btnCopy.classList.replace('hover:bg-emerald-700', 'hover:bg-indigo-700');
-      el.btnCopy.innerHTML = original;
+      el.btnCopy.classList.remove('done');
+      el.btnCopy.innerHTML = old;
     }, 1800);
   } catch {
     toast('Gagal copy — salin manual');
@@ -347,14 +351,11 @@ async function copyEmail() {
 function startPoll() {
   stopPoll();
   pollTimer = setInterval(refreshMessages, POLL_MS);
-  el.pollInfo.textContent = `every ${POLL_MS / 1000}s`;
-  setLive(true, 'Live Sync');
 }
 
 function stopPoll() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = null;
-  el.pollInfo.textContent = 'off';
 }
 
 async function newAddress() {
@@ -362,6 +363,7 @@ async function newAddress() {
   const ok = confirm('Buat alamat baru? Inbox lama akan hilang dari sesi ini.');
   if (!ok) return;
   stopPoll();
+  stopExpiry();
   if (session?.accountId && session?.token) {
     try {
       await api(`/accounts/${session.accountId}`, {
@@ -379,29 +381,23 @@ async function newAddress() {
   await createSession();
 }
 
-function initTheme() {
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === 'light') document.documentElement.classList.remove('dark');
-  else if (saved === 'dark') document.documentElement.classList.add('dark');
-  // default stays dark from html class
-}
-
 // Events
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
-
-  el.themeToggle?.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem(
-      THEME_KEY,
-      document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-    );
-  });
-
-  el.btnGenerate.addEventListener('click', createSession);
+  el.btnGenerate.addEventListener('click', () => createSession());
   el.btnCopy.addEventListener('click', copyEmail);
   el.btnRefresh.addEventListener('click', refreshMessages);
+  el.btnRefresh2?.addEventListener('click', refreshMessages);
   el.btnNew.addEventListener('click', newAddress);
+  el.btnPrefix?.addEventListener('click', () => {
+    const prefix = prompt('Custom alias (huruf/angka, min 3):', 'hello');
+    if (!prefix) return;
+    if (session) {
+      // replace current
+      newAddress().then(() => createSession(prefix));
+    } else {
+      createSession(prefix);
+    }
+  });
   $('btnCloseDrawer')?.addEventListener('click', closeDrawer);
   el.overlay?.addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (e) => {
@@ -419,11 +415,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }).catch(() => toast('Gagal mark seen'));
     }
   });
+  $('btnDrawerDelete')?.addEventListener('click', closeDrawer);
 
   // boot
   (async function boot() {
     const saved = loadSession();
     if (!saved?.token || !saved?.address) {
+      renderEmail();
+      setButtons(false);
+      return;
+    }
+    // if expired session (>10 min), clear
+    if (saved.createdAt && Date.now() - saved.createdAt > SESSION_MINUTES * 60 * 1000) {
+      localStorage.removeItem(STORAGE_KEY);
       renderEmail();
       setButtons(false);
       return;

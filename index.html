@@ -1,151 +1,574 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id" class="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#020617">
-  <title>NaeyaTempMail — Temporary Disposable Email</title>
+  <meta name="theme-color" content="#F5F0ED">
+  <title>NaeyaTempMail — Secure Temporary Email</title>
   <meta name="description" content="NaeyaTempMail — generate temporary email, receive & read messages instantly. Free, no signup.">
-  <meta property="og:title" content="NaeyaTempMail — Temporary Disposable Email">
-  <meta property="og:description" content="Generate temporary email for free. Receive & read messages instantly. No registration required.">
+  <meta property="og:title" content="NaeyaTempMail — Secure Temporary Email">
+  <meta property="og:description" content="Generate temporary email for free. Protect your inbox from spam.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aonagiworks.github.io/naeyetempmail/">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✉️</text></svg>">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-          },
-        },
-      },
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F5F0ED;
+      --surface: #FFFFFF;
+      --border: #E8E0DC;
+      --border-light: #F0EBE8;
+      --text: #2C2420;
+      --muted: #8A7C76;
+      --muted-light: #B5A8A2;
+      --accent: #6B2C3E;
+      --accent-light: #8D4458;
+      --accent-soft: rgba(107,44,62,0.08);
+      --accent-badge: #A8556A;
+      --navy: #1E3A5F;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+      --font: 'Inter', system-ui, sans-serif;
+      --display: 'Playfair Display', Georgia, serif;
+      --mono: ui-monospace, 'SF Mono', Menlo, monospace;
     }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-light); }
+    img { max-width: 100%; display: block; }
+    button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+    input { font: inherit; }
+    .wrap { width: min(1100px, 100% - 2rem); margin: 0 auto; }
+    .page { padding: 2rem 0 3rem; display: grid; gap: 1.5rem; }
+
+    /* Header */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 0; gap: 1rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .nav-brand {
+      font-family: var(--display);
+      font-size: 1.45rem;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--accent);
+      letter-spacing: 0.01em;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 1.75rem;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active {
+      color: var(--accent);
+      font-weight: 600;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.15rem;
+    }
+    .nav-icons {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .nav-icons button {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .nav-icons button:hover { background: var(--accent-soft); color: var(--accent); }
+    .nav-icons svg { width: 18px; height: 18px; }
+
+    /* Hero Card */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2.5rem 2rem;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+    .hero-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .email-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 0.35rem 0.35rem 0.35rem 1rem;
+      max-width: 550px;
+      margin: 0 auto;
+    }
+    .email-box .icon-wrap {
+      width: 20px; height: 20px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .email-box .icon-wrap svg { width: 100%; height: 100%; }
+    .email-box .addr {
+      flex: 1;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .email-box .addr.empty {
+      font-family: var(--font);
+      font-weight: 400;
+      color: var(--muted-light);
+      font-size: 0.85rem;
+    }
+    .btn-copy {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-copy:hover { background: var(--accent-light); }
+    .btn-copy:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-copy svg { width: 16px; height: 16px; }
+    .btn-copy.done { background: #4A7A5C; }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    .pill {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.12s;
+    }
+    .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .pill svg { width: 14px; height: 14px; }
+    .pill.accent { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+    .pill.accent svg { color: var(--accent); }
+    .pill.danger:hover { border-color: #C45C66; color: #C45C66; background: #FFF1F2; }
+    .pill:disabled { opacity: 0.35; cursor: not-allowed; }
+    .expiry-pill {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-left: auto;
+    }
+    .expiry-pill svg { width: 14px; height: 14px; }
+    .error-banner {
+      display: none;
+      padding: 0.7rem 1rem;
+      background: #FFF1F2;
+      color: #C45C66;
+      border: 1px solid #F0C9CD;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .error-banner.show { display: block; }
+
+    /* Inbox Section */
+    .inbox-section {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 400px;
+    }
+    .inbox-sidebar {
+      background: var(--bg);
+      border-right: 1px solid var(--border-light);
+      padding: 1.25rem 0.75rem;
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.12s;
+      cursor: pointer;
+    }
+    .sidebar-item:hover { background: var(--border-light); color: var(--text); }
+    .sidebar-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-badge {
+      margin-left: auto;
+      background: var(--accent-badge);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.05rem 0.45rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .sidebar-item:not(.active) .sidebar-badge { background: var(--muted-light); }
+
+    .inbox-main {
+      display: flex; flex-direction: column; min-height: 0;
+    }
+    .inbox-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .inbox-header h2 { font-size: 1rem; font-weight: 600; }
+    .inbox-tools { display: flex; gap: 0.35rem; }
+    .inbox-tools button {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      color: var(--muted);
+      transition: all 0.12s;
+    }
+    .inbox-tools button:hover { background: var(--accent-soft); color: var(--accent); }
+    .inbox-tools svg { width: 16px; height: 16px; }
+
+    .inbox-body { flex: 1; overflow: auto; min-height: 280px; }
+    .email-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: background 0.1s;
+      min-width: 0;
+    }
+    .email-row:hover { background: var(--bg); }
+    .email-row.active { background: var(--accent-soft); }
+    .email-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .email-dot.unread { background: var(--accent-badge); }
+    .email-dot.read { background: var(--muted-light); }
+    .email-info { flex: 1; min-width: 0; }
+    .email-sender { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .email-subject { font-size: 0.82rem; font-weight: 500; color: var(--text); margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-preview { font-size: 0.75rem; color: var(--muted); margin-top: 0.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-time { font-size: 0.72rem; color: var(--muted-light); white-space: nowrap; flex-shrink: 0; }
+
+    .empty-inbox {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem; text-align: center; color: var(--muted);
+      height: 100%;
+    }
+    .empty-inbox svg { width: 36px; height: 36px; color: var(--muted-light); margin-bottom: 0.75rem; }
+    .empty-inbox h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+    .empty-inbox p { font-size: 0.8rem; }
+
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(100vw, 520px); z-index: 110;
+      background: var(--surface);
+      box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .drawer-close {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      color: var(--muted);
+      transition: all 0.12s;
+    }
+    .drawer-close:hover { background: var(--accent-soft); color: var(--accent); }
+    .drawer-close svg { width: 18px; height: 18px; }
+    .drawer-actions { display: flex; gap: 0.4rem; }
+    .drawer-actions button {
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      border: 1px solid var(--border-light);
+      transition: all 0.12s;
+    }
+    .drawer-actions button:hover { border-color: var(--accent); color: var(--accent); }
+    .drawer-body {
+      flex: 1; overflow-y: auto; padding: 1.25rem;
+    }
+    .drawer-subject {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+    .drawer-meta {
+      display: flex; flex-wrap: wrap; gap: 0.25rem 1rem;
+      font-size: 0.78rem; color: var(--muted);
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 1rem;
+    }
+    .drawer-meta strong { color: var(--text); font-weight: 600; }
+    .drawer-content { font-size: 0.88rem; color: var(--text); line-height: 1.7; }
+    .drawer-content iframe {
+      width: 100%; min-height: 250px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+    .drawer-content pre {
+      white-space: pre-wrap; word-break: break-word;
+      font-family: var(--font); font-size: 0.88rem;
+      background: var(--bg); border: 1px solid var(--border-light);
+      border-radius: var(--radius); padding: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.75rem 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.78rem;
+    }
+    .footer-brand {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--accent);
+    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
+    .footer-links a { color: var(--muted); }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { color: var(--muted-light); }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 1.5rem;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--text); color: #fff;
+      border-radius: 999px; padding: 0.65rem 1.1rem;
+      font-size: 0.82rem; font-weight: 500;
+      opacity: 0; pointer-events: none;
+      transition: all 0.2s; z-index: 200;
+      max-width: min(90vw, 340px); text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 860px) {
+      .inbox-section { grid-template-columns: 1fr; }
+      .inbox-sidebar { display: none; }
+      .hero-card { padding: 1.5rem 1.25rem; }
+      .email-box { flex-wrap: wrap; padding: 0.5rem; }
+      .email-box .addr { width: 100%; text-align: center; padding: 0.25rem 0; }
+      .btn-copy { width: 100%; justify-content: center; }
+      .nav-links { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .page { padding: 1rem 0; gap: 1rem; }
+      .hero-card { padding: 1.25rem 1rem; border-radius: var(--radius-lg); }
+      .hero-title { font-size: 1.3rem; }
+      .inbox-header { padding: 0.75rem 1rem; }
+      .email-row { padding: 0.65rem 1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
+<body>
+  <div class="wrap page">
 
-  <!-- HEADER -->
-  <header class="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-8 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">N</div>
-      <div>
-        <span class="font-bold text-lg sm:text-xl tracking-tight block leading-tight">NaeyaTempMail</span>
-        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Free · no signup · disposable inbox</span>
+    <!-- Nav -->
+    <nav>
+      <span class="nav-brand">Naeya</span>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#" class="active">Premium</a>
       </div>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <div id="liveBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-500 dark:text-slate-400 text-xs font-medium">
-        <span id="liveDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-        <span class="hidden sm:inline" id="liveText">Idle</span>
+      <div class="nav-icons">
+        <button aria-label="Language"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 21a9 9 0 100-18 9 9 0 000 18z M3.6 9h16.8 M3.6 15h16.8 M12 3a15 15 0 010 18 15 15 0 010-18z"/></svg></button>
+        <button id="themeToggle" aria-label="Toggle theme"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.354 15.354A9 9 0 018.646 3.646 9 9 0 0012 21a9 9 0 008.354-5.646z"/></svg></button>
+        <button aria-label="Status"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.858 15.355-5.858 21.213 0"/></svg></button>
       </div>
-      <button id="themeToggle" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle Theme">
-        <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-        <svg class="w-5 h-5 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-      </button>
-    </div>
-  </header>
+    </nav>
 
-  <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+    <!-- Hero Card -->
+    <div class="hero-card">
+      <h1 class="hero-title">Secure, Temporary Email</h1>
+      <p class="hero-sub">Protect your personal inbox from spam with a disposable address.</p>
 
-    <div id="errorBanner" class="hidden px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm font-medium"></div>
+      <div id="errorBanner" class="error-banner"></div>
 
-    <!-- HERO / GENERATOR -->
-    <section class="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-        <div>
-          <h1 class="text-xl font-bold">Disposable Email Address</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Protect your personal inbox from spam and security risks.</p>
-        </div>
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg text-xs font-mono font-medium self-start sm:self-auto">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Domain: <span id="domainInfo">—</span>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-center gap-3 bg-slate-50 dark:bg-slate-800/60 p-2 sm:p-3 rounded-xl border border-slate-200 dark:border-slate-700/80">
-        <input type="text" id="emailAddress" readonly value="" placeholder="Tekan Generate untuk buat email..." class="w-full bg-transparent px-3 py-2 font-mono text-base sm:text-lg font-semibold text-indigo-600 dark:text-indigo-400 outline-none select-all placeholder:text-slate-400 placeholder:font-sans placeholder:font-medium">
-        <button id="btnCopy" disabled class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 text-white font-medium rounded-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-          <span>Copy Email</span>
+      <div class="email-box">
+        <div class="icon-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <span id="emailAddress" class="addr empty">Generate a new address to start</span>
+        <button id="btnCopy" class="btn-copy" disabled>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          COPY
         </button>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-        <button id="btnGenerate" class="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md shadow-indigo-600/20">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <div class="hero-actions">
+        <button id="btnGenerate" class="pill" style="background:var(--accent);color:#fff;border-color:transparent;font-weight:600">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/></svg>
           Generate
         </button>
-        <button id="btnRefresh" disabled class="px-4 py-2 text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Refresh Inbox
+        <button id="btnPrefix" class="pill" disabled>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          Prefix
         </button>
-        <button id="btnNew" disabled class="px-4 py-2 text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          New Address
+        <button id="btnRefresh" class="pill" disabled>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg>
+          Refresh
         </button>
-        <span class="ml-auto text-[11px] text-slate-400 font-mono hidden sm:inline">Poll: <span id="pollInfo">off</span></span>
-      </div>
-    </section>
-
-    <!-- INBOX -->
-    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xl">
-      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 class="font-bold text-base">Inbox Stream</h2>
-        <span class="text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-slate-500 font-mono" id="mailCount">0 Message</span>
-      </div>
-
-      <div id="inboxList" class="divide-y divide-slate-100 dark:divide-slate-800"></div>
-
-      <div id="emptyState" class="flex flex-col items-center justify-center p-12 text-center">
-        <div class="w-14 h-14 bg-indigo-50 dark:bg-slate-800/80 rounded-2xl flex items-center justify-center text-indigo-500 mb-3">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <button id="btnNew" class="pill danger" disabled>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Delete
+        </button>
+        <div class="expiry-pill" id="expiryPill">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Expires in: <span id="timer">10:00</span>
         </div>
-        <h3 class="text-sm font-semibold">Waiting for incoming messages</h3>
-        <p class="text-xs text-slate-400 max-w-xs mt-1">Generate an address first. Emails sent to your temporary address will show up here automatically.</p>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="text-center text-xs text-slate-400 py-6 px-4">
-    NaeyaTempMail · powered by <a href="https://docs.mail.tm/" target="_blank" rel="noreferrer" class="text-indigo-500 hover:underline">mail.tm</a> · free · no signup
-  </footer>
-
-  <!-- DRAWER -->
-  <div id="drawerOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
-  <div id="emailDrawer" class="fixed inset-y-0 right-0 w-full max-w-xl bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col">
-    <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
-      <button id="btnCloseDrawer" class="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 transition-colors" aria-label="Close">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-      <div class="flex items-center gap-2">
-        <button id="btnMarkSeen" class="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors">Mark seen</button>
       </div>
     </div>
-    <div class="p-6 overflow-y-auto flex-1 space-y-6">
-      <div>
-        <h2 id="drawerSubject" class="text-lg font-bold text-slate-900 dark:text-white mb-3"></h2>
-        <div class="flex items-center justify-between text-xs text-slate-400 pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
-          <div class="min-w-0">
-            <span id="drawerSender" class="font-semibold text-slate-700 dark:text-slate-200 block truncate"></span>
-            <span id="drawerEmail" class="block text-slate-400 truncate"></span>
-          </div>
-          <span id="drawerTime" class="shrink-0"></span>
+
+    <!-- Inbox Section -->
+    <div class="inbox-section">
+      <div class="inbox-sidebar">
+        <div class="sidebar-item active" id="sidebarInbox">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Inbox
+          <span class="sidebar-badge" id="inboxBadge">0</span>
+        </div>
+        <div class="sidebar-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 4v12l-4-2-4 2V4M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Drafts
+        </div>
+        <div class="sidebar-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Trash
         </div>
       </div>
-      <div id="drawerBody" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></div>
+
+      <div class="inbox-main">
+        <div class="inbox-header">
+          <h2>Inbox</h2>
+          <div class="inbox-tools">
+            <button id="btnRefresh2" aria-label="Refresh"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg></button>
+            <button id="btnFilter" aria-label="Filter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg></button>
+          </div>
+        </div>
+        <div class="inbox-body" id="inboxBody">
+          <div class="empty-inbox" id="emptyState">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <h3>Waiting for incoming messages</h3>
+            <p>Emails sent to your temporary address will show up here automatically.</p>
+          </div>
+          <div id="inboxList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <span class="footer-brand">Naeya</span>
+      <div class="footer-links">
+        <a href="#">FAQ</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">API Documentation</a>
+        <a href="#">Contact</a>
+      </div>
+      <span class="footer-copy">© 2026 Naeya Digital Hygiene. All rights reserved.</span>
+    </footer>
+  </div>
+
+  <!-- Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="emailDrawer">
+    <div class="drawer-head">
+      <button class="drawer-close" id="btnCloseDrawer"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      <div class="drawer-actions">
+        <button id="btnMarkSeen">Mark seen</button>
+        <button id="btnDrawerDelete" style="color:#C45C66;border-color:#F0C9CD">Delete</button>
+      </div>
+    </div>
+    <div class="drawer-body">
+      <h3 class="drawer-subject" id="drawerSubject"></h3>
+      <div class="drawer-meta">
+        <span><strong>From:</strong> <span id="drawerSender"></span></span>
+        <span><strong>Date:</strong> <span id="drawerTime"></span></span>
+      </div>
+      <div class="drawer-content" id="drawerBody"></div>
     </div>
   </div>
 
-  <div id="toast" class="fixed left-1/2 bottom-4 -translate-x-1/2 translate-y-3 opacity-0 pointer-events-none bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-semibold px-4 py-2.5 rounded-full shadow-xl transition-all duration-200 z-[60] max-w-[90vw] text-center"></div>
+  <div class="toast" id="toast"></div>
 
   <script src="app.js"></script>
 </body>
