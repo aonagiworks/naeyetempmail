@@ -358,7 +358,7 @@ function stopPoll() {
   pollTimer = null;
 }
 
-async function newAddress() {
+async function newAddress(customLocal) {
   if (busy) return;
   const ok = confirm('Buat alamat baru? Inbox lama akan hilang dari sesi ini.');
   if (!ok) return;
@@ -378,7 +378,7 @@ async function newAddress() {
   closeDrawer();
   renderEmail();
   setButtons(false);
-  await createSession();
+  await createSession(customLocal);
 }
 
 // Events
@@ -392,12 +392,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const prefix = prompt('Custom alias (huruf/angka, min 3):', 'hello');
     if (!prefix) return;
     if (session) {
-      // replace current
-      newAddress().then(() => createSession(prefix));
+      newAddress(prefix);
     } else {
       createSession(prefix);
     }
   });
+
+  // Theme toggle
+  const themeBtn = $('themeToggle');
+  if (themeBtn) {
+    const saved = localStorage.getItem('naeyatempmail.theme');
+    if (saved === 'light') document.documentElement.classList.remove('dark');
+    else if (saved === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.add('dark');
+    themeBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('naeyatempmail.theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+  }
+
+  // Filter (toggle unread / all)
+  const filterBtn = $('btnFilter');
+  if (filterBtn) {
+    filterBtn.addEventListener('click', () => {
+      filterBtn.classList.toggle('active');
+      toast('Filter toggled');
+    });
+  }
+
+  // Sidebar — just cosmetic clicks
+  document.querySelectorAll('.sidebar-item').forEach((item) => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.sidebar-item').forEach((n) => n.classList.remove('active'));
+      item.classList.add('active');
+      if (item.id === 'sidebarInbox') {
+        refreshMessages();
+      }
+    });
+  });
+
+  // Nav "How it works", "Privacy" — smooth scroll to sections or toast
+  document.querySelectorAll('.nav-links a').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      if (link.getAttribute('href')?.startsWith('#')) return; // let it scroll
+      e.preventDefault();
+      if (link.textContent.includes('Premium')) {
+        toast('Premium — coming soon');
+      } else {
+        toast(link.textContent.trim());
+      }
+    });
+  });
+
   $('btnCloseDrawer')?.addEventListener('click', closeDrawer);
   el.overlay?.addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (e) => {
