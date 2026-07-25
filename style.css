@@ -1,0 +1,53 @@
+/* NaeyaTempMail — custom styles */
+html { scroll-behavior: smooth; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+#drawerBody iframe {
+  width: 100%;
+  min-height: 280px;
+  border: 1px solid rgb(226 232 240);
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.dark #drawerBody iframe {
+  border-color: rgb(30 41 59);
+}
+
+#drawerBody pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.9rem;
+  background: rgb(248 250 252);
+  border: 1px solid rgb(226 232 240);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.dark #drawerBody pre {
+  background: rgb(15 23 42);
+  border-color: rgb(30 41 59);
+  color: rgb(226 232 240);
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#020617">
+  <title>NaeyaTempMail — Temporary Disposable Email</title>
+  <meta name="description" content="NaeyaTempMail — generate temporary email, receive & read messages instantly. Free, no signup.">
+  <meta property="og:title" content="NaeyaTempMail — Temporary Disposable Email">
+  <meta property="og:description" content="Generate temporary email for free. Receive & read messages instantly. No registration required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aonagiworks.github.io/naeyetempmail/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✉️</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- HEADER -->
+  <header class="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">N</div>
+      <div>
+        <span class="font-bold text-lg sm:text-xl tracking-tight block leading-tight">NaeyaTempMail</span>
+        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Free · no signup · disposable inbox</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div id="liveBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-500 dark:text-slate-400 text-xs font-medium">
+        <span id="liveDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+        <span class="hidden sm:inline" id="liveText">Idle</span>
+      </div>
+      <button id="themeToggle" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle Theme">
+        <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <svg class="w-5 h-5 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <div id="errorBanner" class="hidden px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm font-medium"></div>
+
+    <!-- HERO / GENERATOR -->
+    <section class="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <h1 class="text-xl font-bold">Disposable Email Address</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Protect your personal inbox from spam and security risks.</p>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg text-xs font-mono font-medium self-start sm:self-auto">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Domain: <span id="domainInfo">—</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center gap-3 bg-slate-50 dark:bg-slate-800/60 p-2 sm:p-3 rounded-xl border border-slate-200 dark:border-slate-700/80">
+        <input type="text" id="emailAddress" readonly value="" placeholder="Tekan Generate untuk buat email..." class="w-full bg-transparent px-3 py-2 font-mono text-base sm:text-lg font-semibold text-indigo-600 dark:text-indigo-400 outline-none select-all placeholder:text-slate-400 placeholder:font-sans placeholder:font-medium">
+        <button id="btnCopy" disabled class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 text-white font-medium rounded-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <span>Copy Email</span>
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+        <button id="btnGenerate" class="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-md shadow-indigo-600/20">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Generate
+        </button>
+        <button id="btnRefresh" disabled class="px-4 py-2 text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Refresh Inbox
+        </button>
+        <button id="btnNew" disabled class="px-4 py-2 text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          New Address
+        </button>
+        <span class="ml-auto text-[11px] text-slate-400 font-mono hidden sm:inline">Poll: <span id="pollInfo">off</span></span>
+      </div>
+    </section>
+
+    <!-- INBOX -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xl">
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h2 class="font-bold text-base">Inbox Stream</h2>
+        <span class="text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-slate-500 font-mono" id="mailCount">0 Message</span>
+      </div>
+
+      <div id="inboxList" class="divide-y divide-slate-100 dark:divide-slate-800"></div>
+
+      <div id="emptyState" class="flex flex-col items-center justify-center p-12 text-center">
+        <div class="w-14 h-14 bg-indigo-50 dark:bg-slate-800/80 rounded-2xl flex items-center justify-center text-indigo-500 mb-3">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold">Waiting for incoming messages</h3>
+        <p class="text-xs text-slate-400 max-w-xs mt-1">Generate an address first. Emails sent to your temporary address will show up here automatically.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-xs text-slate-400 py-6 px-4">
+    NaeyaTempMail · powered by <a href="https://docs.mail.tm/" target="_blank" rel="noreferrer" class="text-indigo-500 hover:underline">mail.tm</a> · free · no signup
+  </footer>
+
+  <!-- DRAWER -->
+  <div id="drawerOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
+  <div id="emailDrawer" class="fixed inset-y-0 right-0 w-full max-w-xl bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col">
+    <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
+      <button id="btnCloseDrawer" class="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 transition-colors" aria-label="Close">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="flex items-center gap-2">
+        <button id="btnMarkSeen" class="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors">Mark seen</button>
+      </div>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1 space-y-6">
+      <div>
+        <h2 id="drawerSubject" class="text-lg font-bold text-slate-900 dark:text-white mb-3"></h2>
+        <div class="flex items-center justify-between text-xs text-slate-400 pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
+          <div class="min-w-0">
+            <span id="drawerSender" class="font-semibold text-slate-700 dark:text-slate-200 block truncate"></span>
+            <span id="drawerEmail" class="block text-slate-400 truncate"></span>
+          </div>
+          <span id="drawerTime" class="shrink-0"></span>
+        </div>
+      </div>
+      <div id="drawerBody" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed left-1/2 bottom-4 -translate-x-1/2 translate-y-3 opacity-0 pointer-events-none bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-semibold px-4 py-2.5 rounded-full shadow-xl transition-all duration-200 z-[60] max-w-[90vw] text-center"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
