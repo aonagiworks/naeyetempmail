@@ -22,7 +22,6 @@ const el = {
   btnRefresh2: $('btnRefresh2'),
   btnNew: $('btnNew'),
   btnPrefix: $('btnPrefix'),
-  inboxBadge: $('inboxBadge'),
   inboxList: $('inboxList'),
   emptyState: $('emptyState'),
   drawer: $('emailDrawer'),
@@ -133,7 +132,6 @@ function renderEmail() {
   if (!session) {
     el.email.textContent = 'Generate a new address to start';
     el.email.classList.add('empty');
-    el.inboxBadge.textContent = '0';
     stopExpiry();
     el.timer.textContent = '10:00';
     showEmpty(true);
@@ -231,7 +229,6 @@ async function refreshMessages() {
     const data = await api('/messages', { token: session.token });
     const items = asMembers(data);
     const total = data?.['hydra:totalItems'] ?? items.length;
-    el.inboxBadge.textContent = String(total);
     renderList(items);
     setError('');
   } catch (err) {
@@ -437,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }).catch(() => toast('Gagal mark seen'));
     }
   });
-  $('btnDrawerDelete')?.addEventListener('click', closeDrawer);
 
   // boot
   (async function boot() {
